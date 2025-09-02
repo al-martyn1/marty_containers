@@ -1,0 +1,44 @@
+<umba-mm-module-info>
+
+    <!--
+        Данный файл описывает модуль в формате менеджера модулей UMBA-MM.
+        При использовании CMake для управления проектами и библиотеками
+        использование UMBA-MM несколько потеряло актуальность,
+        но тем не менее UMBA-MM может быть использован для управления 
+        зависимостями и автоматического получения модулей из репозиториев.
+
+        Наличие данного файла необходимо для менеджера модулей UMBA-MM.
+      -->
+
+    <!-- !!!RELNOTES
+
+        v 1.0 
+
+      -->
+
+    <!-- options>
+      <options-list type="cpp_defines"></options-list>
+    </options-->
+
+    <!--options>
+      <options-list type="cpp_includes"></options-list>
+    </options-->
+
+    <!--options match-var="Toolchain" match-to="keil-v*/armcc-v*">
+      <options-list type="cpp_options">--cpp11</options-list>
+    </options-->
+
+    <!-- options match-var="Toolchain" match-to="keil-v*/armclang-v*,*/gcc*">
+      <options-list type="cpp_options">-std=c++11</options-list>
+    </options -->
+
+    <!-- Supported since Visual C++ 2013 Update 3 -->
+    <!-- options match-var="Toolchain" match-to="msvs-v201*/msc_v*">
+      <options-list type="cpp_options">/std:c++14</options-list>
+    </options-->
+
+    <!--file>
+      <file-path>_readme.txt</file-path>
+    </file-->
+
+</umba-mm-module-info>
