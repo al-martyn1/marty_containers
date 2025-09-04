@@ -5,6 +5,8 @@
     Пары ключ-значение храним в векторе. Индексы элементов для ускорения поиска храним в map/unordered_map. Удаление елементов требует пербора map и обновления индексов там,
     но наш контейнер редко будет использоватся для удаления элементов.
 
+    erase работает очень медленно и через жопу, но это не критично для контейнера, у которого обычно никогда ничего не удаляется.
+
  */
 
 #include <cstddef>
@@ -104,17 +106,18 @@ protected: // helper methods
         return std::is_same_v< container_type, std::vector<std::pair<const Key, T> > >;
     }
 
-
+    //! Простое удаление из вектора std:pair, где первый элемент пары - константа - это проблема, потому что копирование (и, возможно, и перемещение) - запрещены.
+    // Поэтому делаем не эффективно, через жопу, но оно работает
     template<typename IterType>
     void containerEraseImpl(IterType b, IterType e)
     {
-        if constexpr (!isVector())
-        {
-            // list, or, may be, deque, or something else
-            // Но если не будет работать, будем разбираться
-            m_container.erase(b,e);
-        }
-        else
+        // if constexpr (!isVector())
+        // {
+        //     // list, or, may be, deque, or something else
+        //     // Но если не будет работать, будем разбираться
+        //     m_container.erase(b,e);
+        // }
+        // else
         {
             auto tailSize = std::size_t(distance(e, m_container.end())); // Определили размер
             container_type tailVec; tailVec.reserve(tailSize);           // Создали вектор под хвост и зарезервировали под вектор
