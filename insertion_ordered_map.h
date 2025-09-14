@@ -71,9 +71,30 @@ public: // ctors and assigns
 
     insertion_ordered_map() = default;
     insertion_ordered_map(const insertion_ordered_map &) = default;
-    insertion_ordered_map& operator=(const insertion_ordered_map &) = default;
     insertion_ordered_map(insertion_ordered_map &&) = default;
-    insertion_ordered_map& operator=(insertion_ordered_map &&) = default;
+
+    insertion_ordered_map& operator=(const insertion_ordered_map &other)
+    {
+        m_container.clear();
+        m_container.reserve(other.m_container.size());
+        const_iterator it = other.m_container.begin();
+        for(; it!=other.m_container.end(); ++it)
+        {
+            m_container.push_back(*it);
+        }
+
+        m_map = other.m_map;
+
+        return *this;
+    }
+
+    insertion_ordered_map& operator=(insertion_ordered_map && other)
+    {
+        m_container = container_type(); // .clear();
+        m_map       = map_type      (); // .clear();
+        swap(other);
+        return *this;
+    }
 
     template< class InputIt >
     insertion_ordered_map( InputIt first, InputIt last )
