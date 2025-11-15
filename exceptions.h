@@ -32,7 +32,11 @@ public: //ctors
     : std::runtime_error(message)
     {}
 
-    update_error() = default;
+    explicit update_error(const char* message)
+        : std::runtime_error(message)
+    {}
+
+    update_error() = delete;
     update_error(const update_error &) = default;
     update_error(update_error &&) = default;
     update_error& operator=(const update_error &) = default;

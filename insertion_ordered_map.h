@@ -179,13 +179,13 @@ protected: // helper classes
 
         // Тут нет проблем - возвращаем константную ссылку
         //const mapped_type& operator mapped_type() const
-        operator mapped_type() const
+        operator mapped_type() const &&
         {
             // return valueRef;
             return updateIt->second;
         }
 
-        UpdateProxy& operator=(const mapped_type& newVal)
+        UpdateProxy& operator=(const mapped_type& newVal) &&
         {
             if (forceAllowUpdate)
             {
@@ -204,7 +204,7 @@ protected: // helper classes
                 return *this;
             }
 
-            else
+            if constexpr (updateStrategy==UpdateStrategy::updateChangeOrder)
             {
                 // Удаляем существующий элемент и помещаем в конец новый 
                 // Стратегия обновления UpdateStrategy::updateChangeOrder
@@ -335,19 +335,22 @@ public:
             if constexpr (updateStrategy==UpdateStrategy::updateRestrict)
                 throw update_error("marty::containers::insertion_ordered_map::insert: updating forbidden due UpdateStrategy::updateRestrict option");
 
-            auto cIt = m_container.begin();
-            advance(cIt, difference_type(mIt->second));
-
-            if constexpr (updateStrategy==UpdateStrategy::updateInplace)
+            else
             {
-                cIt->second = value.second;
-                return std::make_pair(cIt, false);
-            }
-
-            else // updateChangeOrder
-            {
-                erase(cIt);
-                return insert(value); // Повторяем попытку вставки после удаления
+                auto cIt = m_container.begin();
+                advance(cIt, difference_type(mIt->second));
+    
+                if constexpr (updateStrategy==UpdateStrategy::updateInplace)
+                {
+                    cIt->second = value.second;
+                    return std::make_pair(cIt, false);
+                }
+    
+                if constexpr (updateStrategy==UpdateStrategy::updateChangeOrder)
+                {
+                    erase(cIt);
+                    return insert(value); // Повторяем попытку вставки после удаления
+                }
             }
 
         }
@@ -372,20 +375,24 @@ public:
             if constexpr (updateStrategy==UpdateStrategy::updateRestrict)
                 throw update_error("marty::containers::insertion_ordered_map::insert: updating forbidden due UpdateStrategy::updateRestrict option");
 
-            auto cIt = m_container.begin();
-            advance(cIt, difference_type(mIt->second));
-
-            if constexpr (updateStrategy==UpdateStrategy::updateInplace)
+            else
             {
-                cIt->second = value.second;
-                return std::make_pair(cIt, false);
+                auto cIt = m_container.begin();
+                advance(cIt, difference_type(mIt->second));
+    
+                if constexpr (updateStrategy==UpdateStrategy::updateInplace)
+                {
+                    cIt->second = value.second;
+                    return std::make_pair(cIt, false);
+                }
+    
+                if constexpr (updateStrategy==UpdateStrategy::updateChangeOrder)
+                {
+                    erase(cIt);
+                    return insert(std::move(value)); // Повторяем попытку вставки после удаления
+                }
             }
 
-            else // updateChangeOrder
-            {
-                erase(cIt);
-                return insert(std::move(value)); // Повторяем попытку вставки после удаления
-            }
         }
         else
         {
