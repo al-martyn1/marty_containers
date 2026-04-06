@@ -1,7 +1,10 @@
-/*!
-    \file
+/*! \file
+    \author Alexander Martynov (Marty AKA al-martyn1) <amart@mail.ru>
+    \copyright (c) 2014-2026 Alexander Martynov
     \brief Опции различных контейнеров.
- */
+
+    Repository: https://github.com/al-martyn1/marty_containers
+*/
 
 #pragma once
 
